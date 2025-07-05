@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        #main {
+            width: 100%;
+        }
+
+        #top-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            background-color: aquamarine;
+            align-items: center;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+
+        #side-bar {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding-left: 2rem;
+        }
+
+        #top-bar-options {
+            display: flex;
+            gap: 3rem;
+        }
+
+        #top-bar-options>div>ul {
+            display: flex;
+            list-style-type: none;
+            gap: 1rem;
+        }
+
+        #top-bar-options {
+            margin-left: 25px;
+            margin-right: 25px;
+        }
+
+        #top-bar-options div:nth-of-type(2) {
+            margin-top: 5px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        #log-in-option {
+            display: flex;
+            align-items: center;
+            width: 100px;
+            padding: 5px;
+            gap: 5px;
+            border: 0;
+            border-radius: 10px;
+        }
+
+        #middle-section {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            padding-top: 15px;
+            padding-bottom: 15px;
+        }
+
+        #middle-section form {
+            width: 100%;
+        }
+
+        #middle-section form input {
+            width: 80%;
+            margin: 0 30px;
+            padding: 5px;
+        }
+
+        #middle-section form div{
+            display: inline-flex;
+            gap: 15px;
+        }
+
+         #middle-section form div button{
+            padding: 5px;
+            width: 80px;
+         }
+
+        @media screen and (max-width:650px) {
+
+            #top-bar-options {
+                gap: 0;
+            }
+
+            #top-bar-options>div {
+                margin-right: 8px;
+            }
+
+            .option-item span:nth-of-type(2) {
+                display: none;
+            }
+
+            #log-in-option {
+                width: auto;
+                padding-left: 8px;
+                padding-right: 8px;
+            }
+
+            #log-in-option span:nth-of-type(2) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main">
+        <div id="top-bar">
+            <div id="side-bar"><span><i width="35px" height="35px" data-lucide="panel-left-dashed"></i></span>
+                <span>All Tasks</span>
+            </div>
+
+            <section id="top-bar-options">
+
+                <div>
+                    <ul>
+                        <li style="gap: 0;" class="option-item">
+                            <span><i data-lucide="move-down"></i></span>
+                            <span>Export</span>
+                        </li>
+                        <li class="option-item">
+                            <span><i data-lucide="list"></i></span>
+                            <span>List View</span>
+                        </li>
+                        <li class="option-item">
+                            <span><i data-lucide="list-filter"></i></span>
+                            <span>Filtering</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div><button id="log-in-option">
+                        <span><i data-lucide="log-in"></i></span>
+                        <span>Sign In</span>
+                    </button>
+                </div>
+            </section>
+        </div>
+
+        <div id="middle-section">
+            <form method="POST" action="">
+                {% csrf_token %}
+                <input type="text" name="task" placeholder="Create Your Task">
+                <div>
+                    <button onclick="addTask(event)">Add</button>
+                    <button onclick="">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+
+    <script>
+        function addTask(event) {
+            event.preventDefault();
+            const myToken = document.cookie.split('=')
+            let taskName = document.getElementsByName('task')[0].value;
+            if (taskName.length<=0){
+                // add task input field is empty
+                alert('Please Add Task');
+                return
+            }
+            console.log(myToken);
+            fetch('add/', {
+                method: 'POST',
+                body: JSON.stringify(taskName),
+                headers: {
+                    'Content-type': 'application/json',
+                    'X-CSRFToken': myToken[1],
+                }
+            }).then((response)=>{
+                return response.json();
+            }).then((data)=>{
+                console.log(data);
+            })
+        }
+    </script>
+</body>
+
+</html>
